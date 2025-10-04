@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="[package].[ModuleName]Dao">
+
+    <!-- 分页查询 @author wangxiao -->
+    <select id="queryPage" resultType="[package].[ModuleName]VO">
+        SELECT
+            [id],
+            [field],
+            create_time,
+            update_time
+        FROM t_[table_name]
+        <where>
+            <if test="queryForm.[field] != null and queryForm.[field] != ''">
+                AND [field] LIKE CONCAT('%', #{queryForm.[field]}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>
