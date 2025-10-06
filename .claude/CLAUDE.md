@@ -14,8 +14,8 @@
 **写任何代码之前，你必须先阅读以下文档：**
 
 **前端开发**:
-- `smart-admin-web-typescript/CODING_STANDARDS.md` - 前端代码规范
-- `smart-admin-web-typescript/DEV_GUIDE.md` - 前端开发指南
+- `smart-admin-web-typescript/FRONTEND_CODING_STANDARDS.md` - 前端代码规范
+- `smart-admin-web-typescript/FRONTEND_DEV_GUIDE.md` - 前端开发指南
 - `smart-admin-web-typescript/.templates/` - 前端代码模板
 
 **后端开发**:
@@ -228,7 +228,7 @@ pageNum = 1  // 第一页
 ## 🚦 开发工作流
 
 ### 开始前
-1. ✅ 阅读相关的 `CODING_STANDARDS.md`
+1. ✅ 阅读相关的 `FRONTEND_CODING_STANDARDS.md` 或 `BACKEND_CODING_STANDARDS.md`
 2. ✅ 查看现有代码的写法
 3. ✅ 找到 `.templates/` 下的模板
 

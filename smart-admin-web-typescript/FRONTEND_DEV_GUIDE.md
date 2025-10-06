@@ -9,7 +9,7 @@
 ## 📋 快速开始
 
 ### 必读文档
-1. [代码规范标准](./CODING_STANDARDS.md) - 详细的编码规范
+1. [代码规范标准](./FRONTEND_CODING_STANDARDS.md) - 详细的编码规范
 2. [代码模板](./.templates/) - 标准化代码模板
 3. 本文档 - 实施指南和检查清单
 
@@ -151,7 +151,7 @@ git push
 
 ### 开发前检查
 
-- [ ] 阅读 [CODING_STANDARDS.md](./CODING_STANDARDS.md)
+- [ ] 阅读 [FRONTEND_CODING_STANDARDS.md](./FRONTEND_CODING_STANDARDS.md)
 - [ ] 确认功能分类 (business/support/system)
 - [ ] 规划好完整的目录结构
 - [ ] 准备好代码模板
@@ -252,20 +252,87 @@ npm run type-check
 
 ## 💡 最佳实践
 
-### 1. 优先复用
+### 1. 优先使用 Ant Design Vue 组件 ⚠️ 强制
+
+**核心原则**: 能用 Ant Design Vue 组件的，**必须使用**，不要自己实现
+
+**为什么**:
+- ✅ 稳定性好，经过大量项目验证
+- ✅ 可维护性强，有官方文档和社区支持
+- ✅ 开发效率高，无需从零实现
+- ✅ UI 风格统一，用户体验一致
+
+**反例**:
+```vue
+<!-- ❌ 错误：自己实现分页 -->
+<MyPagination :total="total" @change="handlePageChange" />
+
+<!-- ✅ 正确：使用 Ant Design Vue -->
+<a-pagination v-model:current="current" :total="total" />
+```
+
+```vue
+<!-- ❌ 错误：自己实现表格 -->
+<MyTable :data="tableData" :columns="columns" />
+
+<!-- ✅ 正确：使用 Ant Design Vue -->
+<a-table :dataSource="tableData" :columns="columns" rowKey="id" />
+```
+
+**自己实现组件前必须做**:
+1. 查阅 [Ant Design Vue 官方文档](https://antdv.com/)
+2. 确认 Ant Design Vue 确实没有对应组件
+3. 确认现有的 `components/framework/` 和 `components/support/` 没有可复用组件
+
+### 2. 勇于质疑不合理需求 ⚠️ 重要
+
+**如果遇到以下情况，必须质疑**:
+- 需求要求"自己开发组件"，而 Ant Design Vue 已有现成组件
+- 需求要求"自定义样式"，而 Ant Design Vue 通过配置就能实现
+- 需求要求"引入新的UI库"，而 Ant Design Vue 已经提供
+
+**质疑模板**:
+> "这个需求要求自定义组件，但我发现 Ant Design Vue 的 `a-xxx` 组件已经提供了这个功能。使用官方组件有以下优势：
+> 1. 稳定性更好，经过大量项目验证
+> 2. 可维护性强，有官方文档和社区支持
+> 3. 开发效率高，无需从零实现
+> 4. UI 风格统一
+>
+> 请问有什么特殊需求是官方组件无法满足的吗？"
+
+**敢于反驳**:
+- 不要盲目接受"产品说要自定义"的需求
+- 用技术角度说明使用标准组件的优势
+- 只有在确实有特殊业务场景时，才考虑自定义
+
+### 3. 最大化组件复用
 
 开发前先检查是否有类似功能可以复用:
 - 查看 `components/framework/` 下的通用组件
 - 查看 `components/support/` 下的支撑组件
 - 查看现有业务模块的实现
+- 同一功能不要在多个地方重复实现
 
-### 2. 保持一致
+### 4. 技术选型合理性
+
+**新增第三方库前，必须评估**:
+- [ ] Ant Design Vue 是否已提供类似功能？
+- [ ] 原生 JS/TS 能否实现？
+- [ ] 现有依赖中是否有类似功能？
+- [ ] 引入新库会增加多少包体积？
+- [ ] 这个库的维护状态如何？
+
+**避免技术栈碎片化**:
+- 能用 Ant Design Vue + 原生实现的，不引入新依赖
+- 不要为了一个小功能引入一个大库
+
+### 5. 保持一致
 
 - 同一业务模块的所有文件使用相同的命名前缀
 - API、常量、组件路径保持对应关系
 - 代码风格与现有代码保持一致
 
-### 3. 及时重构
+### 6. 及时重构
 
 发现重复代码立即提取:
 - 重复的业务逻辑 → 抽取到工具函数
@@ -304,7 +371,7 @@ views/business/order/
 ### Q4: 团队新成员如何快速上手?
 
 **A**:
-1. 阅读 [CODING_STANDARDS.md](./CODING_STANDARDS.md)
+1. 阅读 [FRONTEND_CODING_STANDARDS.md](./FRONTEND_CODING_STANDARDS.md)
 2. 参考现有代码实现
 3. 使用代码模板
 4. 遵循本开发指南
