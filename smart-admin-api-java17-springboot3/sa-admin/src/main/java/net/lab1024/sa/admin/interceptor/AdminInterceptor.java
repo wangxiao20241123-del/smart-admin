@@ -14,8 +14,10 @@ import net.lab1024.sa.base.common.annoation.NoNeedLogin;
 import net.lab1024.sa.base.common.code.SystemErrorCode;
 import net.lab1024.sa.base.common.code.UserErrorCode;
 import net.lab1024.sa.base.common.domain.ResponseDTO;
+import net.lab1024.sa.base.common.enumeration.UserTypeEnum;
 import net.lab1024.sa.base.common.util.SmartRequestUtil;
 import net.lab1024.sa.base.common.util.SmartResponseUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -41,6 +43,9 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Resource
     private LoginService loginService;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -61,6 +66,16 @@ public class AdminInterceptor implements HandlerInterceptor {
             String tokenValue = StpUtil.getTokenValue();
             String loginId = (String) StpUtil.getLoginIdByToken(tokenValue);
             RequestEmployee requestEmployee = loginService.getLoginEmployee(loginId, request);
+
+            // 开发环境：如果没有登录用户，创建一个mock管理员用户
+            if ("dev".equals(activeProfile) && requestEmployee == null) {
+                requestEmployee = new RequestEmployee();
+                requestEmployee.setEmployeeId(1L);
+                requestEmployee.setUserType(UserTypeEnum.ADMIN_EMPLOYEE);
+                requestEmployee.setActualName("开发环境Mock用户");
+                requestEmployee.setAdministratorFlag(true);  // 设置为管理员，拥有所有权限
+                log.info("开发环境：使用Mock管理员用户");
+            }
 
             // --------------- 第二步： 校验 登录 ---------------
 
