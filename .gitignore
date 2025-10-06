@@ -29,3 +29,14 @@ claudedocs/
 ### macOS ###
 .DS_Store
 
+### Logs ###
+**/logs/
+**/*.log
+**/*log-directory*/
+
+### Backup Files ###
+*.bak
+*.backup
+*.swp
+*.tmp
+
