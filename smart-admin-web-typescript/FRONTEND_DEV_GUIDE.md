@@ -378,6 +378,85 @@ views/business/order/
 
 ---
 
+## 📝 日志规范
+
+### 开发环境日志
+
+**日志位置**:
+```
+smart-admin-web-typescript/logs/
+├── vite-dev.log          # Vite 开发服务器日志
+└── vite-error.log        # Vite 错误日志
+```
+
+**启动命令**（带日志记录）:
+```bash
+# 开发模式（记录日志到文件）
+npm run dev 2>&1 | tee logs/vite-dev.log
+
+# 或使用简化命令
+npm run dev:log
+```
+
+**查看实时日志**:
+```bash
+# 查看开发日志
+tail -f logs/vite-dev.log
+
+# 只看错误
+tail -f logs/vite-error.log
+```
+
+### 浏览器控制台日志规范
+
+**日志级别使用**:
+```typescript
+// ✅ 正确用法
+console.log('普通信息:', data);           // 一般信息
+console.info('操作成功:', result);        // 成功提示
+console.warn('警告:', warningMsg);        // 警告信息
+console.error('错误:', error);            // 错误信息
+
+// ❌ 禁止在生产环境留下调试日志
+console.log('test');                      // 提交前必须删除
+```
+
+**日志脱敏**:
+```typescript
+// ❌ 错误 - 可能泄露敏感信息
+console.log('用户登录:', loginForm);      // 包含密码
+
+// ✅ 正确 - 只记录必要信息
+console.log('用户登录:', { username: loginForm.username });
+```
+
+**生产环境日志**:
+```typescript
+// 开发环境可以使用 console
+if (import.meta.env.DEV) {
+  console.log('调试信息:', data);
+}
+
+// 生产环境使用日志服务
+if (import.meta.env.PROD) {
+  // TODO: 集成日志服务 (Sentry, LogRocket等)
+}
+```
+
+### package.json 添加日志命令
+
+在 `package.json` 的 `scripts` 中添加:
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "dev:log": "mkdir -p logs && vite 2>&1 | tee logs/vite-dev.log"
+  }
+}
+```
+
+---
+
 ## 📖 参考资源
 
 - [SmartAdmin官方文档](https://smartadmin.vip)
