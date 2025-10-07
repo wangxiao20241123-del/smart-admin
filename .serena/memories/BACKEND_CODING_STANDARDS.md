@@ -6,19 +6,80 @@
 
 ---
 
+## 🚀 开发速查表
+
+> **新人必看**: 写代码前先看这个表,90%的问题都在这里
+
+### 核心规范(每个文件都要检查)
+
+```java
+/*
+ * [功能模块名称]
+ *
+ * @Author:    wangxiao
+ * @Date:      2025-10-04
+ * @Copyright  子午线高科智能科技 2025
+ */
+
+/**
+ * [方法说明] @author wangxiao
+ */
+```
+
+⚠️ **强制要求**:
+- 文件头: `@Author: wangxiao` + `@Copyright 子午线高科智能科技 2025`
+- 方法注释: 所有public方法必须加 `@author wangxiao`
+
+### 常见场景速查
+
+| 场景 | ✅ 正确做法 | ❌ 错误做法 |
+|------|-----------|-----------|
+| **Controller返回值** | `ResponseDTO<T>` | 直接返回业务对象 |
+| **错误处理** | `ResponseDTO.error(ErrorCode)` | 硬编码错误码/消息 |
+| **事务控制** | `@Transactional(rollbackFor = Exception.class)` | `@Transactional` |
+| **对象转换** | `SmartBeanUtil.copy()` | `BeanUtils.copyProperties()` |
+| **分页查询** | `SmartPageUtil` | 手动分页逻辑 |
+| **数据校验** | `@RequestBody @Valid Form` | 手动校验参数 |
+
+### 快速决策树
+
+#### 我应该返回什么类型?
+```
+在Controller?
+├─ 是 → 必须返回 ResponseDTO<T>
+└─ 否 → 在Service?
+    ├─ 是 → ResponseDTO<T> 或业务对象都可以
+    └─ 否 → 在Dao?
+        └─ 是 → Entity 或集合
+```
+
+#### 我应该用哪个ErrorCode?
+```
+用户输入问题? → UserErrorCode (30001-30999)
+业务规则不满足? → BusinessErrorCode (50001-59999)
+系统内部错误? → SystemErrorCode (10001-10999)
+```
+
+#### 我应该放在哪个包?
+```
+核心业务功能? → module.business
+系统管理功能? → module.system
+支撑功能? → module.support
+```
+
+---
+
 ## 📋 目录
 
 1. [项目结构](#项目结构)
-2. [包命名规范](#包命名规范)
-3. [四层架构设计](#四层架构设计)
-4. [类命名规范](#类命名规范)
-5. [ResponseDTO响应规范](#responseDto响应规范)
-6. [ErrorCode错误码规范](#errorcode错误码规范)
-7. [注解规范](#注解规范)
-8. [代码注释规范](#代码注释规范)
-9. [数据库规范](#数据库规范)
-10. [异常处理规范](#异常处理规范)
-11. [最佳实践](#最佳实践)
+2. [四层架构](#四层架构)
+3. [类命名规范](#类命名规范)
+4. [ResponseDTO规范](#responsedt规范)
+5. [ErrorCode规范](#errorcode规范)
+6. [注解规范](#注解规范)
+7. [数据库规范](#数据库规范)
+8. [异常处理](#异常处理)
+9. [工具推荐](#工具推荐)
 
 ---
 
@@ -29,36 +90,17 @@
 ```
 smart-admin-api-java17-springboot3/
 ├── sa-base/              # 基础模块(框架、工具、公共组件)
-│   ├── common/           # 公共组件
+│   ├── common/           # 公共组件(ResponseDTO、工具类)
 │   ├── config/           # 配置类
 │   ├── constant/         # 常量定义
 │   └── module/support/   # 支撑功能
 ├── sa-admin/             # 业务模块(具体业务实现)
-│   ├── module/business/  # 业务功能
-│   └── module/system/    # 系统功能
+│   ├── module/business/  # 核心业务功能
+│   └── module/system/    # 系统管理功能
 └── pom.xml
 ```
 
-### 模块职责
-
-| 模块 | 职责 | 示例 |
-|------|------|------|
-| **sa-base** | 框架基础、工具类、公共组件 | ResponseDTO、工具类、配置类 |
-| **sa-admin** | 业务实现、系统功能 | Controller、Service、Dao |
-
----
-
-## 包命名规范
-
-### 业务分类
-
-所有业务代码按照以下三类进行组织:
-
-1. **business**: 核心业务功能
-2. **system**: 系统管理功能
-3. **support**: 支撑功能(非核心业务)
-
-### 包结构示例
+### 包结构规范
 
 ```java
 // ✅ 正确: 业务功能
@@ -71,139 +113,83 @@ net.lab1024.sa.admin.module.system.employee
 net.lab1024.sa.admin.enterprise
 ```
 
+💡 **使用模板**: 参考 `.templates/` 目录获取标准化代码模板
+
 ---
 
-## 四层架构设计
+## 四层架构
 
-### 架构层次
+### 架构层次与职责
 
-```
-Controller (控制层)
-    ↓
-Service (服务层)
-    ↓
-Manager (管理层, 可选)
-    ↓
-Dao (数据访问层)
-```
+| 层级 | 职责 | 注解 | 返回值 | 模板 |
+|------|------|------|--------|------|
+| **Controller** | 接口定义、参数校验、权限控制 | `@RestController` | `ResponseDTO<T>` | ControllerTemplate.java |
+| **Service** | 业务逻辑、事务控制 | `@Service` | `ResponseDTO<T>` 或业务对象 | ServiceTemplate.java |
+| **Manager** | 复杂业务编排、缓存管理(可选) | `@Component` | 业务对象 | - |
+| **Dao** | 数据库操作 | `@Mapper` | Entity 或集合 | DaoTemplate.java |
 
-### 各层职责
-
-| 层级 | 职责 | 注解 | 返回值 |
-|------|------|------|--------|
-| **Controller** | 接口定义、参数校验、权限控制 | `@RestController` | `ResponseDTO<T>` |
-| **Service** | 业务逻辑、事务控制 | `@Service` | `ResponseDTO<T>` 或业务对象 |
-| **Manager** | 复杂业务编排、缓存管理 | `@Component` | 业务对象 |
-| **Dao** | 数据库操作 | `@Mapper` | Entity 或 集合 |
-
-### 代码示例
+### 代码模板(精简版)
 
 #### Controller层
-
 ```java
-/*
- * 企业管理
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
 @RestController
-@Api(tags = {SwaggerTagConst.AdminBusiness.MANAGER_OA_ENTERPRISE})
-public class EnterpriseController {
+public class ModuleController {
 
     @Resource
-    private EnterpriseService enterpriseService;
+    private ModuleService moduleService;
 
     /**
-     * 分页查询企业 @author wangxiao
+     * [操作说明] @author wangxiao
      */
-    @Operation(summary = "分页查询企业 @author wangxiao")
-    @PostMapping("/oa/enterprise/page/query")
-    @SaCheckPermission("oa:enterprise:query")
-    public ResponseDTO<PageResult<EnterpriseVO>> queryByPage(
-            @RequestBody @Valid EnterpriseQueryForm queryForm) {
-        return enterpriseService.queryByPage(queryForm);
-    }
-
-    /**
-     * 新增企业 @author wangxiao
-     */
-    @Operation(summary = "新增企业 @author wangxiao")
-    @PostMapping("/oa/enterprise/add")
-    @SaCheckPermission("oa:enterprise:add")
-    public ResponseDTO<String> add(@RequestBody @Valid EnterpriseAddForm addForm) {
-        return enterpriseService.add(addForm);
+    @Operation(summary = "[操作说明] @author wangxiao")
+    @PostMapping("/path")
+    @SaCheckPermission("module:action")
+    public ResponseDTO<T> method(@RequestBody @Valid Form form) {
+        return moduleService.method(form);
     }
 }
 ```
 
 #### Service层
-
 ```java
-/*
- * 企业服务
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
 @Service
-public class EnterpriseService {
+public class ModuleService {
 
     @Resource
-    private EnterpriseDao enterpriseDao;
+    private ModuleDao moduleDao;
 
     /**
-     * 分页查询 @author wangxiao
-     */
-    public ResponseDTO<PageResult<EnterpriseVO>> queryByPage(EnterpriseQueryForm queryForm) {
-        // 1. 构建查询条件
-        Page<?> page = SmartPageUtil.convert2PageQuery(queryForm);
-
-        // 2. 查询数据
-        List<EnterpriseVO> list = enterpriseDao.queryByPage(page, queryForm);
-
-        // 3. 构建分页结果
-        PageResult<EnterpriseVO> pageResult = SmartPageUtil.convert2PageResult(page, list);
-        return ResponseDTO.ok(pageResult);
-    }
-
-    /**
-     * 新增 @author wangxiao
+     * [操作说明] @author wangxiao
      */
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO<String> add(EnterpriseAddForm addForm) {
+    public ResponseDTO<String> method(Form form) {
         // 1. 数据校验
-        // 2. 构建实体
-        EnterpriseEntity entity = SmartBeanUtil.copy(addForm, EnterpriseEntity.class);
+        // 2. 业务逻辑
         // 3. 保存数据
-        enterpriseDao.insert(entity);
         return ResponseDTO.ok();
     }
 }
 ```
 
 #### Dao层
-
 ```java
-/*
- * 企业数据访问
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
 @Mapper
-public interface EnterpriseDao extends BaseMapper<EnterpriseEntity> {
+public interface ModuleDao extends BaseMapper<ModuleEntity> {
 
     /**
-     * 分页查询 @author wangxiao
+     * [操作说明] @author wangxiao
      */
-    List<EnterpriseVO> queryByPage(@Param("page") Page<?> page,
-                                    @Param("queryForm") EnterpriseQueryForm queryForm);
+    List<VO> queryByPage(@Param("page") Page<?> page,
+                         @Param("queryForm") QueryForm queryForm);
 }
 ```
+
+💡 **使用模板**: 复制 `.templates/` 下的模板文件,替换 `[占位符]`
+
+⚠️ **常见错误**:
+- ❌ Controller返回业务对象而不是ResponseDTO
+- ❌ @Transactional不指定rollbackFor
+- ❌ 缺少@author wangxiao标识
 
 ---
 
@@ -211,45 +197,19 @@ public interface EnterpriseDao extends BaseMapper<EnterpriseEntity> {
 
 ### Domain对象命名
 
-| 类型 | 后缀 | 用途 | 示例 |
-|------|------|------|------|
-| **Entity** | Entity | 数据库实体 | `EnterpriseEntity` |
-| **QueryForm** | QueryForm | 查询表单 | `EnterpriseQueryForm` |
-| **AddForm** | AddForm | 新增表单 | `EnterpriseAddForm` |
-| **UpdateForm** | UpdateForm | 更新表单 | `EnterpriseUpdateForm` |
-| **VO** | VO | 视图对象(返回前端) | `EnterpriseVO` |
-| **DTO** | DTO | 数据传输对象 | `EnterpriseDTO` |
-
-### 示例代码
-
-```java
-// ✅ 正确: Entity
-@TableName("t_enterprise")
-public class EnterpriseEntity extends BaseEntity {
-    @TableId(type = IdType.AUTO)
-    private Long enterpriseId;
-    private String enterpriseName;
-}
-
-// ✅ 正确: QueryForm
-public class EnterpriseQueryForm extends PageParam {
-    @Schema(description = "企业名称")
-    private String enterpriseName;
-}
-
-// ✅ 正确: VO
-public class EnterpriseVO {
-    @Schema(description = "企业ID")
-    private Long enterpriseId;
-    @Schema(description = "企业名称")
-    private String enterpriseName;
-}
-```
+| 类型 | 后缀 | 用途 | 示例 | 模板 |
+|------|------|------|------|------|
+| **Entity** | Entity | 数据库实体 | `EnterpriseEntity` | EntityTemplate.java |
+| **QueryForm** | QueryForm | 查询表单 | `EnterpriseQueryForm` | FormTemplate.java |
+| **AddForm** | AddForm | 新增表单 | `EnterpriseAddForm` | FormTemplate.java |
+| **UpdateForm** | UpdateForm | 更新表单 | `EnterpriseUpdateForm` | FormTemplate.java |
+| **VO** | VO | 视图对象(返回前端) | `EnterpriseVO` | VOTemplate.java |
+| **DTO** | DTO | 数据传输对象 | `EnterpriseDTO` | - |
 
 ### 枚举类命名
 
 ```java
-// ✅ 正确: Enum后缀
+// ✅ 正确: Enum后缀,实现BaseEnum
 public enum EnterpriseTypeEnum implements BaseEnum {
     NORMAL(1, "正常企业"),
     DISABLED(0, "禁用企业");
@@ -259,117 +219,76 @@ public enum EnterpriseTypeEnum implements BaseEnum {
 }
 ```
 
+💡 **使用模板**: 参考 `.templates/EnumTemplate.java`
+
 ---
 
-## ResponseDTO响应规范
+## ResponseDTO规范
 
 ### 统一响应结构
 
 ```java
 public class ResponseDTO<T> {
     private Integer code;      // 响应码
-    private String level;      // 日志级别
     private String msg;        // 响应消息
     private Boolean ok;        // 是否成功
     private T data;           // 响应数据
-    private Integer dataType; // 数据类型
 }
 ```
 
 ### 使用规范
 
 ```java
-// ✅ 正确: 成功响应
+// ✅ 成功响应
 return ResponseDTO.ok();
 return ResponseDTO.ok(data);
 
-// ✅ 正确: 业务错误
-return ResponseDTO.error(UserErrorCode.DATA_NOT_EXIST);
+// ✅ 错误响应(使用ErrorCode枚举)
+return ResponseDTO.error(BusinessErrorCode.NOT_EXIST);
 
-// ✅ 正确: 系统错误
-return ResponseDTO.error(SystemErrorCode.SYSTEM_ERROR);
+// ❌ 禁止硬编码
+return ResponseDTO.error(50001, "企业不存在");
 
-// ❌ 错误: 直接返回业务对象
+// ❌ 禁止直接返回业务对象
 return enterprise; // Controller必须返回ResponseDTO
 ```
 
-### Controller返回值规范
-
-```java
-// ✅ 所有Controller方法必须返回ResponseDTO
-@PostMapping("/query")
-public ResponseDTO<List<EnterpriseVO>> query() {
-    return ResponseDTO.ok(list);
-}
-
-// ❌ 禁止直接返回业务对象
-@PostMapping("/query")
-public List<EnterpriseVO> query() {
-    return list;
-}
-```
+⚠️ **强制要求**: Controller所有方法必须返回`ResponseDTO<T>`
 
 ---
 
-## ErrorCode错误码规范
+## ErrorCode规范
 
-### 错误码分类
+### 错误码分类与决策
 
-| 分类 | 范围 | 用途 | 示例 |
-|------|------|------|------|
-| **UserErrorCode** | 30001-30999 | 用户侧错误 | 参数错误、权限不足 |
-| **SystemErrorCode** | 10001-10999 | 系统错误 | 系统异常、服务不可用 |
-| **BusinessErrorCode** | 50001-59999 | 业务错误 | 业务规则校验失败 |
+| 分类 | 范围 | 使用场景 | 示例 |
+|------|------|----------|------|
+| **UserErrorCode** | 30001-30999 | 用户输入错误、权限不足 | 参数格式错误、无权限 |
+| **SystemErrorCode** | 10001-10999 | 系统内部错误 | 数据库连接失败、服务不可用 |
+| **BusinessErrorCode** | 50001-59999 | 业务规则校验失败 | 企业不存在、名称重复 |
 
-### 定义规范
+### 定义与使用
 
 ```java
-/*
- * 业务错误码
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
+// ✅ 正确: 定义ErrorCode枚举
 public enum BusinessErrorCode implements ErrorCode {
-
     ENTERPRISE_NOT_EXIST(50001, "企业不存在"),
-    ENTERPRISE_NAME_EXIST(50002, "企业名称已存在"),
-    ENTERPRISE_DISABLED(50003, "企业已被禁用");
+    ENTERPRISE_NAME_EXIST(50002, "企业名称已存在");
 
     private final int code;
     private final String msg;
-
-    BusinessErrorCode(int code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
-
-    @Override
-    public int getCode() {
-        return code;
-    }
-
-    @Override
-    public String getMsg() {
-        return msg;
-    }
 }
-```
 
-### 使用示例
-
-```java
 // ✅ 正确: 使用ErrorCode
 if (enterprise == null) {
     return ResponseDTO.error(BusinessErrorCode.ENTERPRISE_NOT_EXIST);
 }
 
-// ❌ 错误: 硬编码错误信息
-if (enterprise == null) {
-    return ResponseDTO.error(50001, "企业不存在");
-}
+// ❌ 错误: 硬编码
+return ResponseDTO.error(50001, "企业不存在");
 ```
+
+⚠️ **禁止硬编码**: 所有错误都必须使用ErrorCode枚举
 
 ---
 
@@ -377,120 +296,32 @@ if (enterprise == null) {
 
 ### 必需注解清单
 
-| 注解 | 使用位置 | 说明 |
-|------|---------|------|
-| `@Operation` | Controller方法 | API文档说明,必须包含@author |
-| `@Schema` | DTO/VO字段 | 字段说明 |
-| `@SaCheckPermission` | Controller方法 | 权限控制 |
-| `@Valid` | Controller参数 | 参数校验 |
-| `@Transactional` | Service方法 | 事务控制 |
+| 注解 | 使用位置 | 说明 | 示例 |
+|------|---------|------|------|
+| `@Operation` | Controller方法 | API文档,必须包含@author | `@Operation(summary = "新增 @author wangxiao")` |
+| `@Schema` | DTO/VO字段 | 字段说明 | `@Schema(description = "企业名称")` |
+| `@SaCheckPermission` | Controller方法 | 权限控制 | `@SaCheckPermission("oa:enterprise:add")` |
+| `@Valid` | Controller参数 | 参数校验 | `@RequestBody @Valid Form` |
+| `@Transactional` | Service方法 | 事务控制 | `@Transactional(rollbackFor = Exception.class)` |
 
-### Controller注解示例
-
-```java
-/**
- * 企业管理控制器
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
-@RestController
-@Api(tags = {SwaggerTagConst.AdminBusiness.MANAGER_OA_ENTERPRISE})
-public class EnterpriseController {
-
-    /**
-     * 新增企业 @author wangxiao
-     */
-    @Operation(summary = "新增企业 @author wangxiao")
-    @PostMapping("/oa/enterprise/add")
-    @SaCheckPermission("oa:enterprise:add")
-    public ResponseDTO<String> add(@RequestBody @Valid EnterpriseAddForm addForm) {
-        return enterpriseService.add(addForm);
-    }
-}
-```
-
-### DTO/VO注解示例
+### 完整示例
 
 ```java
-public class EnterpriseVO {
-
-    @Schema(description = "企业ID")
-    private Long enterpriseId;
-
-    @Schema(description = "企业名称")
-    @NotBlank(message = "企业名称不能为空")
-    @Length(max = 200, message = "企业名称最多200字符")
-    private String enterpriseName;
-
-    @Schema(description = "统一社会信用代码")
-    @Length(max = 200, message = "统一社会信用代码最多200字符")
-    private String unifiedSocialCreditCode;
-}
-```
-
----
-
-## 代码注释规范
-
-### 文件头注释
-
-**强制要求**:每个Java文件必须包含完整的文件头注释。
-
-```java
-/*
- * [功能模块名称]
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
-```
-
-### 方法注释
-
-**强制要求**:所有public方法必须包含`@author wangxiao`标识。
-
-```java
-/**
- * 分页查询企业 @author wangxiao
- */
-public ResponseDTO<PageResult<EnterpriseVO>> queryByPage(EnterpriseQueryForm queryForm) {
-    // 实现代码
-}
-
 /**
  * 新增企业 @author wangxiao
  */
-@Transactional(rollbackFor = Exception.class)
-public ResponseDTO<String> add(EnterpriseAddForm addForm) {
-    // 实现代码
+@Operation(summary = "新增企业 @author wangxiao")
+@PostMapping("/oa/enterprise/add")
+@SaCheckPermission("oa:enterprise:add")
+public ResponseDTO<String> add(@RequestBody @Valid EnterpriseAddForm addForm) {
+    return enterpriseService.add(addForm);
 }
 ```
 
-### 业务逻辑注释
-
-对于复杂的业务逻辑,使用分步注释:
-
-```java
-public ResponseDTO<String> add(EnterpriseAddForm addForm) {
-    // 1. 数据校验
-    EnterpriseEntity existEntity = enterpriseDao.getByName(addForm.getEnterpriseName());
-    if (existEntity != null) {
-        return ResponseDTO.error(BusinessErrorCode.ENTERPRISE_NAME_EXIST);
-    }
-
-    // 2. 构建实体
-    EnterpriseEntity entity = SmartBeanUtil.copy(addForm, EnterpriseEntity.class);
-    entity.setDisabledFlag(Boolean.FALSE);
-
-    // 3. 保存数据
-    enterpriseDao.insert(entity);
-
-    return ResponseDTO.ok();
-}
-```
+⚠️ **常见错误**:
+- ❌ @Operation缺少@author wangxiao
+- ❌ @Transactional不指定rollbackFor
+- ❌ Controller参数缺少@Valid
 
 ---
 
@@ -499,76 +330,57 @@ public ResponseDTO<String> add(EnterpriseAddForm addForm) {
 ### Entity规范
 
 ```java
-/*
- * 企业实体
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
 @Data
 @TableName("t_enterprise")
 public class EnterpriseEntity extends BaseEntity {
 
-    /**
-     * 企业ID
-     */
     @TableId(type = IdType.AUTO)
     private Long enterpriseId;
 
-    /**
-     * 企业名称
-     */
     private String enterpriseName;
 
-    /**
-     * 禁用状态
-     */
     private Boolean disabledFlag;
 }
 ```
 
-### MyBatis-Plus分页
+### MyBatis-Plus分页(使用工具类)
 
 ```java
 // ✅ 正确: 使用SmartPageUtil
 Page<?> page = SmartPageUtil.convert2PageQuery(queryForm);
-List<EnterpriseVO> list = enterpriseDao.queryByPage(page, queryForm);
-PageResult<EnterpriseVO> pageResult = SmartPageUtil.convert2PageResult(page, list);
+List<VO> list = dao.queryByPage(page, queryForm);
+PageResult<VO> pageResult = SmartPageUtil.convert2PageResult(page, list);
+
+// ❌ 错误: 手动分页
+Page<VO> page = new Page<>(pageNum, pageSize); // 不要手动创建
 ```
 
 ### Mapper XML规范
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.lab1024.sa.admin.module.business.oa.enterprise.dao.EnterpriseDao">
-
-    <!-- 分页查询 @author wangxiao -->
-    <select id="queryByPage" resultType="net.lab1024.sa.admin.module.business.oa.enterprise.domain.vo.EnterpriseVO">
-        SELECT
-            enterprise_id,
-            enterprise_name,
-            unified_social_credit_code,
-            disabled_flag
-        FROM t_enterprise
-        <where>
-            <if test="queryForm.enterpriseName != null and queryForm.enterpriseName != ''">
-                AND enterprise_name LIKE CONCAT('%', #{queryForm.enterpriseName}, '%')
-            </if>
-            <if test="queryForm.disabledFlag != null">
-                AND disabled_flag = #{queryForm.disabledFlag}
-            </if>
-        </where>
-        ORDER BY create_time DESC
-    </select>
-
-</mapper>
+<!-- 分页查询 @author wangxiao -->
+<select id="queryByPage" resultType="net.lab1024...VO">
+    SELECT
+        enterprise_id,
+        enterprise_name
+    FROM t_enterprise
+    <where>
+        <if test="queryForm.enterpriseName != null and queryForm.enterpriseName != ''">
+            AND enterprise_name LIKE CONCAT('%', #{queryForm.enterpriseName}, '%')
+        </if>
+    </where>
+    ORDER BY create_time DESC
+</select>
 ```
+
+⚠️ **常见错误**:
+- ❌ Entity不继承BaseEntity
+- ❌ 手动实现分页逻辑
+- ❌ Mapper XML缺少@author标识
 
 ---
 
-## 异常处理规范
+## 异常处理
 
 ### Service层异常处理
 
@@ -585,8 +397,8 @@ public ResponseDTO<String> delete(Long id) {
 
 // ❌ 错误: 抛出运行时异常
 public void delete(Long id) {
-    if (enterpriseDao.selectById(id) == null) {
-        throw new RuntimeException("企业不存在");
+    if (dao.selectById(id) == null) {
+        throw new RuntimeException("企业不存在"); // 不要这样做!
     }
 }
 ```
@@ -594,45 +406,31 @@ public void delete(Long id) {
 ### 事务控制
 
 ```java
-// ✅ 正确: 使用@Transactional,指定rollbackFor
+// ✅ 正确: 指定rollbackFor
 @Transactional(rollbackFor = Exception.class)
-public ResponseDTO<String> add(EnterpriseAddForm addForm) {
+public ResponseDTO<String> add(Form form) {
     // 业务逻辑
 }
 
 // ❌ 错误: 未指定rollbackFor
 @Transactional
-public ResponseDTO<String> add(EnterpriseAddForm addForm) {
-    // 业务逻辑
+public ResponseDTO<String> add(Form form) {
+    // 默认只回滚RuntimeException,checked异常不回滚!
 }
 ```
 
+⚠️ **强制要求**: @Transactional必须指定`rollbackFor = Exception.class`
+
 ---
 
-## 最佳实践
+## 工具推荐
 
-### DO/DON'T清单
+### IDEA插件
 
-#### ✅ DO (应该这样做)
-
-- 所有Controller方法返回`ResponseDTO<T>`
-- 所有public方法包含`@author wangxiao`
-- 使用`SmartBeanUtil.copy()`进行对象转换
-- 使用`SmartPageUtil`处理分页
-- ErrorCode枚举管理错误码
-- `@Transactional`指定`rollbackFor = Exception.class`
-- Entity继承`BaseEntity`获取公共字段
-- 使用`@Schema`注解为字段添加说明
-
-#### ❌ DON'T (不应该这样做)
-
-- Controller直接返回业务对象
-- 硬编码错误码和错误信息
-- 使用魔法数字
-- 缺少方法注释和@author标识
-- 事务注解不指定rollbackFor
-- 手动实现分页逻辑
-- 直接使用BeanUtils.copyProperties()
+- **Alibaba Java Coding Guidelines**: 阿里巴巴代码规范检查
+- **SonarLint**: 代码质量实时检查
+- **MyBatisX**: MyBatis-Plus增强工具
+- **Lombok**: 简化Java代码
 
 ### 代码质量检查
 
@@ -647,20 +445,31 @@ mvn spotless:apply
 mvn checkstyle:check
 ```
 
+### 代码模板位置
+
+项目中的 `.templates/` 目录包含以下模板:
+- `ControllerTemplate.java` - Controller层模板
+- `ServiceTemplate.java` - Service层模板
+- `DaoTemplate.java` - Dao层模板
+- `EntityTemplate.java` - Entity模板
+- `FormTemplate.java` - Form模板
+- `VOTemplate.java` - VO模板
+- `EnumTemplate.java` - Enum模板
+
 ---
 
-## 工具推荐
+## 📌 最后检查清单
 
-### IDEA插件
+提交代码前,确保:
 
-- **Alibaba Java Coding Guidelines**: 阿里巴巴代码规范检查
-- **SonarLint**: 代码质量检查
-- **MyBatisX**: MyBatis-Plus增强
-- **Lombok**: 简化Java代码
-
-### 代码模板
-
-参考项目中的 `.templates/` 目录获取标准化代码模板。
+- [ ] 文件头包含`@Author: wangxiao`和`@Copyright 子午线高科智能科技 2025`
+- [ ] 所有public方法包含`@author wangxiao`
+- [ ] Controller方法返回`ResponseDTO<T>`
+- [ ] 使用ErrorCode枚举,没有硬编码错误信息
+- [ ] @Transactional指定`rollbackFor = Exception.class`
+- [ ] 使用SmartBeanUtil和SmartPageUtil工具类
+- [ ] Controller方法包含@Operation、@SaCheckPermission、@Valid注解
+- [ ] DTO/VO字段包含@Schema注解
 
 ---
 

@@ -117,5 +117,10 @@
 <style lang="less" scoped>
   .smart-menu {
     position: relative;
+
+    :deep(.ant-menu-item),
+    :deep(.ant-menu-submenu-title) {
+      font-weight: bold;
+    }
   }
 </style>
