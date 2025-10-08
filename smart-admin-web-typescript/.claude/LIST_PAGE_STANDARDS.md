@@ -1,8 +1,11 @@
-# SmartAdmin 列表页面标准规范
-
-> **作者**: wangxiao | **企业**: 子午线高科智能科技 | **更新**: 2025-10-07
-
 ---
+title: SmartAdmin 列表页面标准规范
+author: wangxiao
+company: 子午线高科智能科技
+date: 2025-10-07
+---
+
+# SmartAdmin 列表页面标准规范
 
 ## 📋 标准结构
 

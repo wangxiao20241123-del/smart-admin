@@ -1,3 +1,10 @@
+---
+title: SmartAdmin 数据库配置信息
+author: wangxiao
+company: 子午线高科智能科技
+date: 2025-10-08
+---
+
 # SmartAdmin 数据库配置信息
 
 ## 数据库连接信息

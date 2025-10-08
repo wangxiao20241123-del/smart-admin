@@ -1,9 +1,12 @@
-# SmartAdmin 前端原型开发指南
-
-> **作者**: wangxiao | **企业**: 子午线高科智能科技 | **更新**: 2025-10-07
-> **适用场景**: 快速原型开发、功能演示、需求验证
-
 ---
+title: SmartAdmin 前端原型开发指南
+author: wangxiao
+company: 子午线高科智能科技
+date: 2025-10-07
+description: 适用场景：快速原型开发、功能演示、需求验证
+---
+
+# SmartAdmin 前端原型开发指南
 
 ## 📌 核心理念
 
