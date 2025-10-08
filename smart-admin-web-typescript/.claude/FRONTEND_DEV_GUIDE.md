@@ -46,18 +46,11 @@ views/business/crm/customer/customer-list.vue
 #### API文件
 ```typescript
 // 复制 .templates/api-template.ts
-/*
- * 客户管理
- *
- * @Author:    wangxiao
- * @Date:      2025-10-07
- * @Copyright  子午线高科智能科技 2025
- */
 import { getRequest, postRequest } from '/@/lib/axios';
 
 export const customerApi = {
   /**
-   * 分页查询 @author wangxiao
+   * 分页查询
    */
   queryPage: (param: CustomerQueryForm) => {
     return postRequest<ResponseModel<PageResultModel<CustomerVO>>>(
@@ -102,9 +95,9 @@ export default { CUSTOMER_STATUS_ENUM };
 - [ ] 分类正确？
 
 **代码检查**:
-- [ ] 文件头注释完整？
-- [ ] 方法含 `@author wangxiao`？
+- [ ] 方法有注释？
 - [ ] 无魔法数字？
+- [ ] TypeScript类型完整？
 
 **工具检查**:
 ```bash
@@ -134,7 +127,6 @@ git push
 - [ ] 文件命名: `{模块}-api.ts`/`{模块}-const.ts`
 - [ ] 常量用 SmartEnum
 - [ ] API 方法有注释
-- [ ] 组件有头部注释
 - [ ] TypeScript 类型完整
 - [ ] 错误用 smartSentry
 

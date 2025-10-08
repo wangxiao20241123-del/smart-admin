@@ -1,34 +1,12 @@
 # SmartAdmin后端代码规范标准
 
-> **作者**: wangxiao
-> **企业**: 子午线高科智能科技
-> **更新时间**: 2025-10-04
+> **作者**: wangxiao | **企业**: 子午线高科智能科技 | **更新**: 2025-10-04
 
 ---
 
 ## 🚀 开发速查表
 
 > **新人必看**: 写代码前先看这个表,90%的问题都在这里
-
-### 核心规范(每个文件都要检查)
-
-```java
-/*
- * [功能模块名称]
- *
- * @Author:    wangxiao
- * @Date:      2025-10-04
- * @Copyright  子午线高科智能科技 2025
- */
-
-/**
- * [方法说明] @author wangxiao
- */
-```
-
-⚠️ **强制要求**:
-- 文件头: `@Author: wangxiao` + `@Copyright 子午线高科智能科技 2025`
-- 方法注释: 所有public方法必须加 `@author wangxiao`
 
 ### 常见场景速查
 
@@ -298,7 +276,7 @@ return ResponseDTO.error(50001, "企业不存在");
 
 | 注解 | 使用位置 | 说明 | 示例 |
 |------|---------|------|------|
-| `@Operation` | Controller方法 | API文档,必须包含@author | `@Operation(summary = "新增 @author wangxiao")` |
+| `@Operation` | Controller方法 | API文档 | `@Operation(summary = "新增企业")` |
 | `@Schema` | DTO/VO字段 | 字段说明 | `@Schema(description = "企业名称")` |
 | `@SaCheckPermission` | Controller方法 | 权限控制 | `@SaCheckPermission("oa:enterprise:add")` |
 | `@Valid` | Controller参数 | 参数校验 | `@RequestBody @Valid Form` |
@@ -319,7 +297,6 @@ public ResponseDTO<String> add(@RequestBody @Valid EnterpriseAddForm addForm) {
 ```
 
 ⚠️ **常见错误**:
-- ❌ @Operation缺少@author wangxiao
 - ❌ @Transactional不指定rollbackFor
 - ❌ Controller参数缺少@Valid
 
@@ -376,7 +353,6 @@ Page<VO> page = new Page<>(pageNum, pageSize); // 不要手动创建
 ⚠️ **常见错误**:
 - ❌ Entity不继承BaseEntity
 - ❌ 手动实现分页逻辑
-- ❌ Mapper XML缺少@author标识
 
 ---
 
@@ -462,8 +438,6 @@ mvn checkstyle:check
 
 提交代码前,确保:
 
-- [ ] 文件头包含`@Author: wangxiao`和`@Copyright 子午线高科智能科技 2025`
-- [ ] 所有public方法包含`@author wangxiao`
 - [ ] Controller方法返回`ResponseDTO<T>`
 - [ ] 使用ErrorCode枚举,没有硬编码错误信息
 - [ ] @Transactional指定`rollbackFor = Exception.class`

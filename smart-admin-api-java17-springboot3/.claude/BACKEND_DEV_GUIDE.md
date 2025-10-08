@@ -1,8 +1,6 @@
 # SmartAdmin后端开发实施指南
 
-> **作者**: wangxiao
-> **企业**: 子午线高科智能科技
-> **更新时间**: 2025-10-07
+> **作者**: wangxiao | **企业**: 子午线高科智能科技 | **更新**: 2025-10-07
 
 ---
 
@@ -89,8 +87,7 @@ CREATE TABLE `t_order` (
 **使用步骤**:
 1. 复制对应模板文件
 2. 替换所有 `{占位符}`
-3. 添加完整的文件头注释（`@Author: wangxiao`, `@Copyright 子午线高科智能科技 2025`）
-4. 为每个public方法添加 `@author wangxiao` 注释
+3. 按照用户偏好添加文件头注释和方法注释
 
 **详细代码示例**: 请查看 `.templates/` 目录下的完整模板文件
 
@@ -100,7 +97,6 @@ CREATE TABLE `t_order` (
 - ✅ Controller必须返回 `ResponseDTO<T>`
 - ✅ Service事务方法必须加 `@Transactional(rollbackFor = Exception.class)`
 - ✅ 使用 `ErrorCode` 枚举，不要硬编码错误信息
-- ✅ 所有public方法添加 `@author wangxiao` 注释
 - ✅ 参数校验使用 `@Valid` 注解
 
 ### Step 5: 自检与测试 (5分钟)
@@ -118,8 +114,6 @@ http://localhost:1024/doc.html
 ```
 
 **快速检查**:
-- [ ] 文件头注释完整（作者、日期、Copyright）
-- [ ] 方法注释包含 `@author wangxiao`
 - [ ] Controller返回 `ResponseDTO<T>`
 - [ ] Service事务方法有 `@Transactional(rollbackFor = Exception.class)`
 - [ ] 使用ErrorCode枚举而非硬编码
@@ -145,8 +139,6 @@ http://localhost:1024/doc.html
 - [ ] Controller: `{模块}Controller.java`
 
 **代码规范**:
-- [ ] 所有类包含完整头部注释
-- [ ] 所有public方法包含 `@author wangxiao`
 - [ ] Controller返回 `ResponseDTO<T>`
 - [ ] Service事务方法有 `@Transactional(rollbackFor = Exception.class)`
 - [ ] 使用ErrorCode枚举

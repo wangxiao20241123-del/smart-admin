@@ -123,25 +123,18 @@ const list = smartEnumPlugin.getValueDescList('GENDER_ENUM');
 ### 标准结构
 
 ```typescript
-/*
- * 模块功能说明
- *
- * @Author:    wangxiao
- * @Date:      2025-10-07
- * @Copyright  子午线高科智能科技 2025
- */
 import { getRequest, postRequest } from '/@/lib/axios';
 
 export const loginApi = {
   /**
-   * 用户登录 @author wangxiao
+   * 用户登录
    */
   login: (param: LoginForm) => {
     return postRequest<ResponseModel<LoginVO>>('/login', param);
   },
 
   /**
-   * 退出登录 @author wangxiao
+   * 退出登录
    */
   logout: () => {
     return getRequest('/login/logout');
@@ -153,11 +146,10 @@ export const loginApi = {
 
 | 要求 | 说明 | 检查点 |
 |------|------|--------|
-| ✅ 文件头 | 作者、日期、Copyright | `@Author: wangxiao` |
-| ✅ 方法注释 | 包含 `@author wangxiao` | 所有API方法 |
 | ✅ 类型约束 | TypeScript 泛型 | `ResponseModel<T>` |
 | ✅ 工具函数 | `getRequest/postRequest` | 不直接用axios |
 | ✅ RESTful | URL 语义化 | `/user/login` 不是 `/api1` |
+| ✅ 方法注释 | 清晰描述功能 | 所有导出方法 |
 
 ### HTTP方法映射
 
@@ -175,13 +167,6 @@ export const loginApi = {
 ### 标准结构
 
 ```vue
-<!--
-  组件功能描述
-
-  @Author:    wangxiao
-  @Date:      2025-10-07
-  @Copyright  子午线高科智能科技 2025
--->
 <template>
   <div class="user-detail">
     <!-- 内容 -->
@@ -239,7 +224,6 @@ async function getDetail() {
 
 | 要求 | 说明 |
 |------|------|
-| ✅ 头部注释完整 | 功能、作者、日期、Copyright |
 | ✅ `<script setup lang="ts">` | 使用Composition API |
 | ✅ TypeScript类型约束 | 所有ref、props、emits都有类型 |
 | ✅ 错误处理 | 用 `smartSentry.captureError` |
@@ -316,23 +300,11 @@ export interface UserVO {
 
 ## 💬 代码注释规范
 
-### 文件头注释
-
-```typescript
-/*
- * 模块功能描述
- *
- * @Author:    wangxiao
- * @Date:      2025-10-07
- * @Copyright  子午线高科智能科技 2025
- */
-```
-
 ### 函数注释
 
 ```typescript
 /**
- * 用户登录 @author wangxiao
+ * 用户登录
  */
 login: (param: LoginForm) => {
   return postRequest('/login', param);
@@ -342,7 +314,6 @@ login: (param: LoginForm) => {
  * 查询用户列表
  * @param form 查询条件
  * @returns 分页数据
- * @author wangxiao
  */
 async function queryList(form: UserQueryForm) {
   // ...
@@ -374,7 +345,6 @@ function handleDataScope() {
 - [ ] 文件命名规范
 - [ ] 常量用 SmartEnum
 - [ ] API 方法有注释
-- [ ] 组件有头部注释
 - [ ] TypeScript 类型完整
 - [ ] 错误用 smartSentry
 

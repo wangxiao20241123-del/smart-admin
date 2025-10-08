@@ -148,12 +148,11 @@ export const routerArray = [...prototypeRouters, ...其他路由];
 
 ### 必须遵守 ⚠️
 
-- ✅ 文件头注释：作者、日期、Copyright
-- ✅ 方法注释：`@author wangxiao`
 - ✅ 枚举：使用SmartEnum，禁止魔法数字
 - ✅ UI组件：100% Ant Design Vue
 - ✅ 目录：必须在 `prototype/` 下
 - ✅ API：必须有Mock降级机制
+- ✅ 方法注释：清晰描述功能
 
 ### 可以简化 ✨
 
@@ -218,7 +217,6 @@ const handleSubmit = async () => {
 /**
  * 原型开发：客户管理API
  * 注意：使用Mock降级，生产环境需移除Mock逻辑
- * @author wangxiao
  */
 ```
 
