@@ -28,7 +28,7 @@ export const studentFollowupRouters = [
         },
       },
       {
-        path: '/prototype/student-followup/student/detail/:id?',
+        path: '/prototype/student-followup/student/detail',
         name: 'PrototypeStudentDetail',
         component: () => import('/@/views/prototype/student-followup/student/student-detail.vue'),
         meta: {

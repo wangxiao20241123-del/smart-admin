@@ -6,6 +6,6 @@
 @FRONTEND_PROTOTYPE_DEV_GUIDE.md
 @LIST_PAGE_STANDARDS.md
 
-## mcp用法
+## MCP 用法
 @MCP_Chrome-DevTools.md
 开发时请参考以上设计文档。

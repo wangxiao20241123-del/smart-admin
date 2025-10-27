@@ -17,6 +17,9 @@ let businessOAInitTableId = 30000;
 
 let businessERPInitTableId = 40000;
 
+//原型功能表格初始化id
+let prototypeInitTableId = 50000;
+
 export const TABLE_ID_CONST = {
   /**
    * 业务
@@ -31,6 +34,15 @@ export const TABLE_ID_CONST = {
     },
     ERP: {
       GOODS: businessERPInitTableId + 1, //商品管理
+    },
+  },
+
+  /**
+   * 原型功能
+   */
+  PROTOTYPE: {
+    WECOM: {
+      CHAT_RECORD: prototypeInitTableId + 1, //企业微信-聊天记录
     },
   },
 

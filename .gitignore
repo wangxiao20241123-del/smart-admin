@@ -40,3 +40,6 @@ claudedocs/
 *.swp
 *.tmp
 
+.serena/
+smart-admin-web-typescript/.env.localhost
+

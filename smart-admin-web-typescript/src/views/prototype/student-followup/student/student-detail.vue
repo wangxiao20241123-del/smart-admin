@@ -241,7 +241,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { message } from 'ant-design-vue';
-import { customerApi } from '/@/api/prototype/ai-sales/customer-api';
+import { studentApi } from '/@/api/prototype/student-followup/student-api';
 import {
   MessageOutlined,
   RobotOutlined,
@@ -316,7 +316,7 @@ onMounted(() => {
 async function getDetail() {
   try {
     loading.value = true;
-    const res = await customerApi.detail(customerId.value);
+    const res = await studentApi.detail(customerId.value);
     if (res.data) {
       detail.value = res.data;
       behaviorData.value = res.data.behaviorTimeline || [];

@@ -1,0 +1,64 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: smart-admin-mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: SmartAdmin666
+      MYSQL_DATABASE: smart_admin_v3
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./数据库SQL脚本/mysql/smart_admin_v3.sql:/docker-entrypoint-initdb.d/smart_admin_v3.sql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - smart-admin-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: smart-admin-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - smart-admin-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart-admin-postgres
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_DB: smart_admin_v3
+      POSTGRES_USER: smartadmin
+      POSTGRES_PASSWORD: SmartAdmin666
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smart-admin-network
+
+networks:
+  smart-admin-network:
+    external: true
+    name: smart-admin_smart-admin-network
+
+volumes:
+  mysql_data:
+    external: true
+    name: smart-admin_mysql_data
+  redis_data:
+    external: true
+    name: smart-admin_redis_data
+  postgres_data:
+    external: true
+    name: smart-admin-postgres-data
