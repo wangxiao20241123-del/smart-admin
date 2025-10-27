@@ -23,9 +23,6 @@ target/
 **/node_modules
 **/.vscode
 
-### Claude Code ###
-claudedocs/
-
 ### macOS ###
 .DS_Store
 
@@ -40,6 +37,5 @@ claudedocs/
 *.swp
 *.tmp
 
-.serena/
 smart-admin-web-typescript/.env.localhost
 
